@@ -51,7 +51,7 @@ It has survived not only five centuries, but also the leap into electronic types
 
 **Output:**
 
-![output](https://github.com/Nisar-99/Salesforce-LWC-Custom-Lookup/blob/master/lookup.jpg)
+![output](https://github.com/Nisar-99/Salesforce-LWC-Popovers/main/output1.jpg)
 
 
 > Popover with markup language (HTML)
@@ -105,7 +105,7 @@ It has survived not only five centuries, but also the leap into electronic types
 
 **Output:**
 
-![output](https://github.com/Nisar-99/Salesforce-LWC-Custom-Lookup/blob/master/lookup.jpg)
+![output](https://github.com/Nisar-99/Salesforce-LWC-Popovers/main/output2.jpg)
 
 > More information about Popovers: [Click Here](https://www.lightningdesignsystem.com/components/popovers/#site-main-content)
 
