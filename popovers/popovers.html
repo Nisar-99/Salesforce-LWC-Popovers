@@ -1,0 +1,32 @@
+<template>
+    <!-- Popover Wrapper -->
+    <div class={popoverContainerClass}>
+        <div class={popoverClass} style={popoverStyle}>
+            <section class={nubbinPlacement} role="dialog">
+                <button if:true={withClose} onclick={handlePopoverClose}
+                    class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon-inverse"
+                    title="Close dialog">
+                    <lightning-icon icon-name="utility:close" alternative-text="close" size="xx-small"
+                        variant={closeButtonVariant}></lightning-icon>
+                </button>
+                <header if:true={hasHeader} class="slds-popover__header">
+                    <h2 class="slds-text-heading_small">
+                        <slot name="header"></slot>
+                    </h2>
+                </header>
+                <div if:true={hasBody} class="slds-popover__body body-content">
+                    <slot name="body"></slot>
+                </div>
+                <footer if:true={hasFooter} class="slds-popover__footer">
+                    <slot name="footer"></slot>
+                </footer>
+            </section>
+        </div>
+        <!-- Popover Target Value -->
+        <span class="main-content">
+            <slot name="value" onmouseover={handleMouseOverOrFocusElement} onmouseleave={handleMouseLeaveOrBlurElement}>
+            </slot>
+        </span>
+    </div>
+
+</template>
