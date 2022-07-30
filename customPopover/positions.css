@@ -1,0 +1,25 @@
+.popover_container .slds-nubbin--left:before { 
+    transform: translateY(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--left:after {  
+    transform: translateY(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--top:before { 
+    transform: translateX(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--top:after {  
+    transform: translateX(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--right:before { 
+    transform: translateY(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--right:after {  
+    transform: translateY(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--bottom:before { 
+    transform: translateX(var(--adjustment)) rotate(45deg); 
+} 
+.popover_container .slds-nubbin--bottom:after {  
+    transform: translateX(var(--adjustment)) rotate(45deg); 
+} 
+

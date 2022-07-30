@@ -1,0 +1,16 @@
+<template>
+    <section>
+        <header if:true={hasHeader} class="slds-popover__header">
+            <h2 class="slds-text-heading_small">
+                <slot name="header"></slot>
+            </h2>
+        </header>
+        <div if:true={hasBody} class="slds-popover__body body-content">
+            <slot name="body"></slot>
+        </div>
+        <footer if:true={hasFooter} class="slds-popover__footer">
+            <slot name="footer"></slot>
+        </footer>
+    </section>
+    
+</template>

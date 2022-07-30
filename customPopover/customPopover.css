@@ -1,0 +1,17 @@
+@import "./mainPopovers.css";
+
+.popove_show {
+    position: absolute;
+    left: var(--popover-x-pos);
+    top: var(--popover-y-pos);
+    visibility: visible;
+    opacity: 1;
+    z-index: var(--lwc-z-index-modal);
+}
+.popover_hidden {
+    position: fixed; 
+    left: -999999px; 
+    top: -999999px;
+    visibility: hidden;
+    opacity: 0;
+}
