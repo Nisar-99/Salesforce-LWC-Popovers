@@ -1,106 +1,154 @@
 import { LightningElement, api } from 'lwc';
-import { NUBBIN_PLACEMENT, CLOSE_BUTTON_VARIANT, POPOVER_CONTAINER_CLASS, POPOVER_UNIQUE_ID, NUBBIN_PADDING } from './constants';
-export default class CuostomPopover extends LightningElement {
-    @api size;
-    @api placement = "top";
-    @api variant;
-    @api withClose = false;
+import { 
+    popoverContainerClass, 
+    popoverClass,  
+    popoverSectionClass, 
+    nubbinAdjustmentClass, 
+    nubbinAdjustmentVars,
+    calcFunction
+} from './helper';
+import { PLACEMENT } from './constants'
+export default class CustomPopover extends LightningElement {
 
-    popoverContainerClass = POPOVER_CONTAINER_CLASS;
-    nubbinPlacement = NUBBIN_PLACEMENT(this.placement, this.variant, this.size);
-    closeButtonVariant = CLOSE_BUTTON_VARIANT(this.variant);
+    @api size;
+    @api variant;
+    @api placement = PLACEMENT.TOP;
+    @api withClose = false;
+ 
+    popoverClass = popoverClass();
+
+    get popoverContainerClass (){
+        return `${popoverContainerClass()} ${this.nubbinAdjustmentClass ?? ''} `;
+    } 
+
+    get popoverSectionClass() { 
+        return popoverSectionClass(this) 
+    };
+    get closeIconVariant () { 
+        return this.variant ? "inverse":"";
+    };
+    get showPopover() {};
+    set showPopover(value) {
+        this.popoverClass = popoverClass(value);
+    }
 
     hasHeader = false;
-    hasFooter = false;
-    hasBody = false;
+    hasBody = true;
+    hasFooter = true;
 
-    popoverStyle = "";
+    hasRendered = false;
 
-    connectedCallback() { 
-        this.handleSlot();
+    renderedCallback() {
+      if (this.hasRendered) return;
+  
+      this.hasRendered = true;
+      this.handleSlot();
     }
+
     handleSlot() {
         [...this.template.querySelectorAll('slot')].forEach(slot => {
             const hasSlotValue = slot.assignedElements().length !== 0 && slot.outerText.length !== 0;
             this[`has${slot.name.toLowerCase().charAt(0).toUpperCase()}`] = hasSlotValue;
         });
     }
-    handleMouseLeaveOrBlurElement(e) {
-      	e.stopPropagation();
-      	!this.withClose && ( this.popoverStyle = "popover_hidden" );
-	}
-	handleMouseOverOrFocusElement(event) {
-		event.stopPropagation();
-		
-  	  	const { popoverXPos, popoverYPos, style:customStyle } = this.calculatePopoverPosition();
-		const style = document.documentElement.style;
 
-
-		style.setProperty('--popover-x-pos', `${popoverXPos}px`);
-
-		style.setProperty('--popover-x-pos', `${popoverXPos}px`);
-		style.setProperty('--popover-y-pos', `${popoverYPos}px`);
-
-  	    this.popoverStyle ="popover_show";
-  	}
-
-	calculatePopoverPosition() {
-		const popoverRect = this.template.querySelector(".popover").getBoundingClientRect();
-		const containerRect = this.template.querySelector(".popover_container").getBoundingClientRect();
-		const windowRect = { top:0, width: window.innerWidth, height: window.innerHeight, left: 0 };
-
-		const placement = calcPlacement(popoverRect, containerRect, windowRect, this.placement);
-		(placement === 'left' || placement === 'right') && calcHorisontal(popoverRect, containerRect, windowRect, placement) ||
-		(placement === 'top' || placement === 'bottom') && calcVertical(popoverRect, containerRect, windowRect, placement);
-		return { popoverXPos: 0, popoverYPos:0, popoverWidth:0, popoverHeight:0 };
+    handleMouseOverOrFocusElement(event) {
+        event.stopPropagation();
+        this.handlePopoverShow();
+    }
+  
+    handleMouseLeaveOrBlurElement(event) {
+        event.stopPropagation();
+        this.tooglePopover = false;
+        this.handlePopoverHide();
     }
 
-	calcPlacement(popoverRect, containerRect, windowRect, placement) { 
-    	if ( placement === "top"    && containerRect.top    - popoverRect.height < windowRect.top )   return "bottom";
-		if ( placement === "right"  && containerRect.right  + popoverRect.width  > windowRect.right)  return "left";
-    	if ( placement === "bottom" && containerRect.bottom + popoverRect.height > windowRect.bottom) return "top";
-    	if ( placement === "left"   && containerRect.left   - popoverRect.width  < windowRect.left)   return "right";
-	}
-	calcHorisontal(popoverRect, containerRect, windowRect, placement) {
-		const popoverHeightDelta = (containerRect.height - popoverRect.height)/2
-		const heightOut = popoverRect.height > windowRect.height;
-        const popoverAdjustment = 10 - containerRect.top;
-		const nubbinAdjustment =  popoverHeightDelta - popoverAdjustment;
+    handleLinkClick(event) {
+        event.stopPropagation();
+        this.tooglePopover = !(this.tooglePopover ?? false); 
+        this.tooglePopover && (this.tooglePopover = this.handlePopoverShow()) || this.handlePopoverHide();
+    }
 
-		const popoverYPos = heightOut ? popoverAdjustment : popoverHeightDelta;
-		const style = heightOut ? this.positionCSS('Y', placement, nubbinAdjustment) : "";
-        
-		const width = placement === 'left' ? containerRect.width : popoverRect.width + NUBBIN_PADDING;
-		const popoverXPos = width * ( placement === 'right' ?-1 :1);
-		return { popoverXPos, popoverYPos, style };
-	}
-	calcVertical(popoverRect, containerRect, windowRect, placement) {
-      	const containerWidthDelta = (containerRect.width - popoverRect.width) / 2;
+    handlePopoverClose() {
+        this.showPopover = false ;
+    }
 
-		const position =  placement === 'bottom' ? 'top' : 'bottom';
+    handlePopoverShow() {
+        const  {  popoverXPos, popoverYPos } = this.calculatePopoverPosition();
+        const style = document.body.style;
 
-		const leftOut = (containerRect.left + containerWidthDelta) < 4;
-		const rightOut = (containerRect.right + Math.abs(containerWidthDelta)) > windowRect.width - 4;
+        style.setProperty('--popover-x-pos', `${popoverXPos}px`);
+		style.setProperty('--popover-y-pos', `${popoverYPos}px`);
 
-		if (leftOut) {
-			nubbinAdjustment = Math.abs(containerRect.left + containerWidthDelta) + 4;
-			popoverXPos += nubbinAdjustment;
-			nubbinAdjustment = -1 * nubbinAdjustment;
-		} else if (rightOut) {
-			nubbinAdjustment = Math.abs(containerRect.right + containerWidthDelta) - windowRect.width + 4;
-			popoverXPos -= nubbinAdjustment;
-		}
-        popoverYPos = containerRect.height + NUBBIN_PADDING * ( placement === 'bottom' ? 1 : -1);
-	
-		const style = this.positionCSS('X', position, nubbinAdjustment);
-		return { popoverXPos, popoverYPos, style };
-	}
+        this.showPopover = true;
+        return true;
+    }
+    handlePopoverHide() {
+        !this.withClose && ( this.showPopover = false )
+    }
+  
+    calculatePopoverPosition() {
+        const containerRect = this.template.querySelector(".popover_container").getBoundingClientRect();
+        const popoverRect = this.template.querySelector(".popover").getBoundingClientRect();
 
-	positionCSS = (axis, position, adjustment) => `
-		.${POPOVER_UNIQUE_ID} .popover_container .slds-nubbin--${position}:before { 
-    		transform: translate${axis}(${adjustment}) rotate(45deg); 
-		} 
-		.${POPOVER_UNIQUE_ID} .popover_container .slds-nubbin--${position}:after {  
-		    transform: translate${axis}(${adjustment}) rotate(45deg); 
-		}`;
+        const placement = this.calcPlacement( containerRect, popoverRect, this );
+
+        const { popoverXPos, popoverYPos, adjustment } = this[calcFunction(placement)](containerRect, popoverRect, placement) ?? {};
+
+        adjustment && ( this.handleNubbinAdjustmentClass( adjustment, placement ) );
+
+        return { popoverXPos, popoverYPos}
+    }
+    calcPlacement( { top, right, left, bottom }, { width, height }, { placement }) {
+
+        if ( placement === PLACEMENT.TOP && top - height < 0 ) return PLACEMENT.BOTTOM; 
+        if ( placement === PLACEMENT.LEFT && left - width < 0 ) return PLACEMENT.RIGHT; 
+
+        if ( placement === PLACEMENT.RIGHT && right + width > window.innerWidth ) return PLACEMENT.LEFT; 
+        if ( placement === PLACEMENT.BOTTOM && bottom + height > window.innerHeight ) return PLACEMENT.TOP;
+
+        return placement;
+    }
+    calcHorizontal({ width:containerWidth, height:containerHeight, top:containerTop}, {height:popoverHeight, width:popoverWidth}, placement) {
+        const nubbinPadding = 14;
+
+        const midHeight = (containerHeight - popoverHeight) / 2;
+        const width = placement === PLACEMENT.LEFT ? containerWidth : popoverWidth + nubbinPadding;
+
+        const adjustment = popoverHeight > window.innerHeight ? midHeight - containerTop - 10:0;
+
+        const popoverXPos = width * ( placement === PLACEMENT.RIGHT? -1:1);
+        const popoverYPos = adjustment || midHeight;
+
+        return { popoverXPos, popoverYPos, adjustment };
+    }
+    calcVertical({ width:containerWidth, height:containerHeight,left:containerLeft, right:containerRight }, {height:popoverHeight, width:popoverWidth}, placement) {
+        const nubbinPadding = 14;
+
+        const height = placement === PLACEMENT.BOTTOM ? containerHeight : popoverHeight + nubbinPadding;
+        const popoverYPos = height * (placement === PLACEMENT.TOP ? -1:1);
+
+        let midWidth = (containerWidth - popoverWidth) / 2;
+        let adjustment = 0;
+
+        if ( containerLeft + midWidth < 4) {
+            adjustment = Math.abs(containerLeft + midWidth) + 4;
+            midWidth += adjustment;
+            adjustment *= -1;
+        } else if (  containerRight + Math.abs(midWidth) > window.innerWidth - 4) {
+            adjustment = containerRight + Math.abs(midWidth) - (window.innerWidth - 20);
+            midWidth -= adjustment;
+        }
+        const popoverXPos = midWidth;
+        return { popoverXPos, popoverYPos, adjustment };
+    }
+    handleNubbinAdjustmentClass( adjustment, placement ) {
+
+        const style = document.body.style;
+
+        style.setProperty(`${nubbinAdjustmentVars(placement)}`,`${adjustment}px`);
+        this.nubbinAdjustmentClass = nubbinAdjustmentClass(placement); 
+
+        return true;
+    }
 }
