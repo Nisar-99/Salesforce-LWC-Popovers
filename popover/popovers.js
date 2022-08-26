@@ -8,7 +8,7 @@ import {
     calcFunction
 } from './helper';
 import { PLACEMENT } from './constants'
-export default class Popover extends LightningElement {
+export default class Popovers extends LightningElement {
 
     @api size;
     @api variant;
