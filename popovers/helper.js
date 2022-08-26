@@ -1,4 +1,3 @@
-import { uniqueId } from 'c/dataUtils'
 import {  
     SLDS_POPOVER_CLASS, 
     POPOVER_SIZES, 
@@ -10,7 +9,8 @@ import {
     CALC_FUNCTION
 } from './constants'
 
-const popoverUniqueId = `popover${uniqueId()}`;
+const uniqueId = `${Date.now().toString(36)}${Math.random().toString(36).substring(2)}`;
+const popoverUniqueId = `popover${uniqueId}`;
 
 const getVariant = (variant) => VARIANTS[variant?.toUpperCase()] ?? "" 
 const getPopoverSize = (size) => POPOVER_SIZES[size?.toUpperCase()] ?? POPOVER_SIZES.MEDIUM; 
