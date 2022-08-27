@@ -1,0 +1,24 @@
+.nubbin-adjustment--left .slds-nubbin--left:before { 
+    transform: translateY(var(--adjustment-left)) rotate(45deg); 
+} 
+.nubbin-adjustment--left .slds-nubbin--left:after {  
+    transform: translateY(var(--adjustment-left)) rotate(45deg); 
+} 
+.nubbin-adjustment--top .slds-nubbin--top:before { 
+    transform: translateX(var(--adjustment-top)) rotate(45deg); 
+} 
+.nubbin-adjustment--top .slds-nubbin--top:after {  
+    transform: translateX(var(--adjustment-top)) rotate(45deg);  
+} 
+.nubbin-adjustment--right .slds-nubbin--right:before { 
+    transform: translateY(var(--adjustment-right)) rotate(45deg); 
+} 
+.nubbin-adjustment--right .slds-nubbin--right:after {  
+    transform: translateY(var(--adjustment-right)) rotate(45deg); 
+} 
+.nubbin-adjustment--bottom .slds-nubbin--bottom:before { 
+    transform: translateX(var(--adjustment-bottom)) rotate(45deg); 
+} 
+.nubbin-adjustment--bottom .slds-nubbin--bottom:after {  
+    transform: translateX(var(--adjustment-bottom)) rotate(45deg); 
+} 

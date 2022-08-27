@@ -1,55 +1,16 @@
-* {
-  white-space: normal;
-}
+@import "./mainPopovers.css";
+@import "./nubbinAdjustment.css";
 
-.popover_container {
-  outline: none;
-  display: inline-block;
-  position: relative !important;
+.popover-show {
+    position: absolute;
+    left: var(--popover-x-pos);
+    top: var(--popover-y-pos);
+    visibility: visible;
+    opacity: 1;
+    z-index: 9999;
 }
-
-.popover_container .popover {
-  visibility: hidden;
-  opacity: 0;
-  position: fixed;
-  top: -999999px;
-  top: -999vh;
-  left: -999999px;
-  left: -999vw;
-}
-
-.main-content {
-  display: inline-block;
-  margin: 0px 5px !important;
-}
-
-.body-content {
-  max-height: 10rem;
-  overflow: auto;
-}
-
-.body-content::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #f5f5f5;
-}
-
-.body-content::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-  background-color: #f5f5f5;
-}
-
-.body-content::-webkit-scrollbar-thumb {
-  background-color: #929292;
-}
-
-/* Header BG*/
-
-.slds-popover_success .slds-popover__header {
-  background-color: #28a745;
-  color: #ffffff;
-}
-.slds-popover_brand .slds-popover__header {
-  background-color: #007bff;
-  color: #ffffff;
+.popover-hide {
+    position: fixed; 
+    visibility: hidden;
+    opacity: 0;
 }
